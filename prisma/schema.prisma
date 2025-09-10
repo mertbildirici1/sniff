@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  handle    String   @unique
+  name      String?
+  email     String?  @unique
+  password  String?  // Add password field
+  image     String?
+  bio       String?
+  city      String?
+  joinedAt  DateTime @default(now())
+  privacy   String   @default("public")
+  streak    Int      @default(0)
+  rankings  Ranking[]
+  lists     List[]
+  follows   Follow[] @relation("followsBy")
+  followers Follow[] @relation("followsTo")
+  comments  Comment[]
+}
+
+model Brand {
+  id      String    @id @default(cuid())
+  name    String    @unique
+  country String?
+  perfumes Perfume[]
+}
+
+model Note {
+  id     String   @id @default(cuid())
+  name   String   @unique
+  family String?
+  perfumes PerfumeNote[]
+}
+
+model Perfume {
+  id            String        @id @default(cuid())
+  name          String
+  concentration String?       // EDT, EDP, Parfum
+  releaseYear   Int?
+  genderTarget  String?       // marketed target
+  imageUrl      String?
+  brandId       String
+  brand         Brand         @relation(fields: [brandId], references: [id])
+  notes         PerfumeNote[]
+  rankings      Ranking[]
+  listItems     ListItem[]
+}
+
+model PerfumeNote {
+  perfumeId String
+  noteId    String
+  position  Position
+  perfume   Perfume @relation(fields: [perfumeId], references: [id])
+  note      Note    @relation(fields: [noteId], references: [id])
+  @@id([perfumeId, noteId, position])
+}
+
+enum Position {
+  top
+  heart
+  base
+}
+
+model List {
+  id       String   @id @default(cuid())
+  userId   String
+  name     String
+  type     ListType
+  isPublic Boolean  @default(true)
+  user     User     @relation(fields: [userId], references: [id])
+  items    ListItem[]
+}
+
+enum ListType {
+  tried
+  wishlist
+  collection
+  hitlist
+}
+
+model ListItem {
+  id        String   @id @default(cuid())
+  listId    String
+  perfumeId String
+  rank      Int
+  addedAt   DateTime @default(now())
+  list      List     @relation(fields: [listId], references: [id])
+  perfume   Perfume  @relation(fields: [perfumeId], references: [id])
+  @@unique([listId, perfumeId])
+}
+
+model Ranking {
+  id         String   @id @default(cuid())
+  userId     String
+  perfumeId  String
+  enjoyment  Int      @default(0) // 0–100
+  versatility Int     @default(0)
+  performance Int     @default(0) // longevity/sillage
+  value      Int      @default(0)
+  reviewText String?
+  photoUrl   String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  perfume    Perfume  @relation(fields: [perfumeId], references: [id])
+  comments   Comment[]
+  @@unique([userId, perfumeId], name: "userId_perfumeId")
+}
+
+model Follow {
+  id         String  @id @default(cuid())
+  followerId String
+  followeeId String
+  follower   User    @relation("followsBy", fields: [followerId], references: [id])
+  followee   User    @relation("followsTo", fields: [followeeId], references: [id])
+  @@unique([followerId, followeeId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  rankingId String
+  text      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  ranking   Ranking  @relation(fields: [rankingId], references: [id])
+}
