@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, Heart, Zap, DollarSign, MessageCircle } from 'lucide-react';
+import { Heart, Zap, MessageCircle } from 'lucide-react';
 import { Perfume, Ranking } from '@/lib/types';
 
 interface RankingCardProps {
@@ -112,48 +112,6 @@ export default function RankingCard({ ranking, showUser = false, onComment }: Ra
             </div>
             <div className="text-xs text-muted-foreground">
               {getScoreLabel(ranking.performance)}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-yellow-500" />
-              <span className="text-sm font-medium">Versatility</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 bg-muted rounded-full h-2">
-                <div 
-                  className="bg-yellow-500 h-2 rounded-full transition-all"
-                  style={{ width: `${ranking.versatility}%` }}
-                />
-              </div>
-              <span className={`text-sm font-semibold ${getScoreColor(ranking.versatility)}`}>
-                {ranking.versatility}
-              </span>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {getScoreLabel(ranking.versatility)}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-green-500" />
-              <span className="text-sm font-medium">Value</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 bg-muted rounded-full h-2">
-                <div 
-                  className="bg-green-500 h-2 rounded-full transition-all"
-                  style={{ width: `${ranking.value}%` }}
-                />
-              </div>
-              <span className={`text-sm font-semibold ${getScoreColor(ranking.value)}`}>
-                {ranking.value}
-              </span>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {getScoreLabel(ranking.value)}
             </div>
           </div>
         </div>

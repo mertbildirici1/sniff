@@ -8,13 +8,13 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Plus, BarChart3, Trophy, Calendar, MapPin } from 'lucide-react';
 import RankingCard from '@/components/cards/RankingCard';
-import { PerfumeCard } from '@/components/cards/PerfumeCard';
+import PerfumeCard from '@/components/cards/PerfumeCard';
 import { User as UserType, Ranking, Perfume } from '@/lib/types';
 
-// Mock user data
+// Mock user data - this would be fetched from the database based on handle
 const mockUser: UserType = {
   id: '1',
-  handle: 'perfumelover',
+  handle: 'sarah_j', // This will be replaced with actual data from database
   name: 'Sarah Johnson',
   image: '/placeholder.svg',
   email: 'sarah@example.com',
@@ -32,9 +32,7 @@ const mockRankings: Ranking[] = [
     userId: '1',
     perfumeId: '1',
     enjoyment: 85,
-    versatility: 70,
     performance: 90,
-    value: 75,
     reviewText: 'Absolutely love this scent! Perfect for everyday wear and lasts all day.',
     photoUrl: '/placeholder.svg',
     createdAt: new Date('2024-01-15'),
@@ -57,9 +55,7 @@ const mockRankings: Ranking[] = [
     userId: '1',
     perfumeId: '2',
     enjoyment: 95,
-    versatility: 80,
     performance: 85,
-    value: 60,
     reviewText: 'Incredible longevity and sillage. Worth every penny!',
     photoUrl: '/placeholder.svg',
     createdAt: new Date('2024-01-14'),
@@ -92,6 +88,10 @@ const mockStats = {
 export default function ProfilePage({ params }: { params: { handle: string } }) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  
+  // Use the handle from URL params instead of hardcoded data
+  // Decode the handle to handle URL encoding (e.g., %20 for spaces)
+  const userHandle = decodeURIComponent(params.handle);
 
   return (
     <div className="space-y-6">
@@ -109,7 +109,7 @@ export default function ProfilePage({ params }: { params: { handle: string } }) 
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <h1 className="text-2xl font-bold">{mockUser.name}</h1>
-                  <Badge variant="outline">@{mockUser.handle}</Badge>
+                  <Badge variant="outline">@{userHandle}</Badge>
                 </div>
                 {mockUser.bio && (
                   <p className="text-muted-foreground mb-3">{mockUser.bio}</p>

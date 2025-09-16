@@ -20,7 +20,10 @@ export async function POST(request: NextRequest) {
     console.log('Request body:', body);
     
     const { email, password, name, handle } = signupSchema.parse(body);
-    console.log('Parsed data:', { email, name, handle, passwordLength: password.length });
+    
+    // Sanitize handle: trim whitespace and convert to lowercase
+    const sanitizedHandle = handle.trim().toLowerCase();
+    console.log('Parsed data:', { email, name, handle: sanitizedHandle, passwordLength: password.length });
 
     // Check if user already exists
     console.log('Checking for existing user...');
@@ -28,7 +31,7 @@ export async function POST(request: NextRequest) {
       where: {
         OR: [
           { email },
-          { handle }
+          { handle: sanitizedHandle }
         ]
       }
     });
@@ -52,7 +55,7 @@ export async function POST(request: NextRequest) {
       data: {
         email,
         name,
-        handle,
+        handle: sanitizedHandle,
         password: hashedPassword,
       }
     });
@@ -63,8 +66,7 @@ export async function POST(request: NextRequest) {
     const defaultLists = [
       { name: 'Tried', type: 'tried' },
       { name: 'Wishlist', type: 'wishlist' },
-      { name: 'Collection', type: 'collection' },
-      { name: 'Hit List', type: 'hitlist' }
+      { name: 'Collection', type: 'collection' }
     ];
 
     await db.list.createMany({

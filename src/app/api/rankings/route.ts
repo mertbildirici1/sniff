@@ -72,9 +72,7 @@ export async function POST(request: NextRequest) {
     const {
       perfumeId,
       enjoyment,
-      versatility,
       performance,
-      value,
       reviewText,
       photoUrl
     } = await request.json();
@@ -88,9 +86,7 @@ export async function POST(request: NextRequest) {
       },
       update: {
         enjoyment,
-        versatility,
         performance,
-        value,
         reviewText,
         photoUrl
       },
@@ -98,9 +94,7 @@ export async function POST(request: NextRequest) {
         userId: session.user.id,
         perfumeId,
         enjoyment,
-        versatility,
         performance,
-        value,
         reviewText,
         photoUrl
       },

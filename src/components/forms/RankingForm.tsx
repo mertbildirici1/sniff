@@ -5,16 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Heart, Zap, Star, DollarSign, Upload, X } from 'lucide-react';
+import { Heart, Zap, Upload, X } from 'lucide-react';
 import { Perfume } from '@/lib/types';
 
 interface RankingFormProps {
   perfume: Perfume;
   onSubmit: (ranking: {
     enjoyment: number;
-    versatility: number;
     performance: number;
-    value: number;
     reviewText?: string;
     photoUrl?: string;
   }) => void;
@@ -25,9 +23,7 @@ interface RankingFormProps {
 export default function RankingForm({ perfume, onSubmit, onCancel, isLoading = false }: RankingFormProps) {
   const [scores, setScores] = useState({
     enjoyment: 0,
-    versatility: 0,
-    performance: 0,
-    value: 0
+    performance: 0
   });
   const [reviewText, setReviewText] = useState('');
   const [photoUrl, setPhotoUrl] = useState('');
@@ -121,18 +117,6 @@ export default function RankingForm({ perfume, onSubmit, onCancel, isLoading = f
               icon={Zap} 
               label="Performance" 
               color="text-blue-500" 
-            />
-            <ScoreSlider 
-              category="versatility" 
-              icon={Star} 
-              label="Versatility" 
-              color="text-yellow-500" 
-            />
-            <ScoreSlider 
-              category="value" 
-              icon={DollarSign} 
-              label="Value" 
-              color="text-green-500" 
             />
           </div>
 

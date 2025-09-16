@@ -6,10 +6,9 @@ A Beli-style social ranking app for perfumes built with Next.js 14, TypeScript, 
 
 ### Core Functionality
 - **Social Feed**: See what your friends are discovering and ranking
-- **Perfume Lists**: Organize perfumes into Tried, Wishlist, Collection, and Hit List with drag-and-drop ranking
-- **Ranking System**: Rate perfumes on enjoyment, versatility, performance, and value (0-100 scale)
+- **Perfume Lists**: Organize perfumes into Tried, Wishlist, and Collection with drag-and-drop ranking
+- **Ranking System**: Rate perfumes on enjoyment and performance (0-100 scale)
 - **Search & Discovery**: Find perfumes by name, brand, notes with advanced filtering
-- **Store Map**: Discover perfume stores and boutiques near you
 - **User Profiles**: View stats, rankings, and activity with leaderboards
 
 ### Technical Features
@@ -78,8 +77,7 @@ A Beli-style social ranking app for perfumes built with Next.js 14, TypeScript, 
 - **Discover** (`/discover`) - Trending perfumes and editorial lists
 - **Lists** (`/lists`) - Personal perfume lists with drag-and-drop ranking
 - **Search** (`/search`) - Search and filter perfumes
-- **Map** (`/map`) - Find stores and boutiques
-- **Profile** (`/u/[handle]`) - User profiles and stats
+- **Profile** (`/u/[handle]`) - User profiles and stats (uses actual usernames)
 
 ### Key Components
 - `PerfumeCard` - Display perfume information

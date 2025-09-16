@@ -83,7 +83,6 @@ enum ListType {
   tried
   wishlist
   collection
-  hitlist
 }
 
 model ListItem {
@@ -102,9 +101,7 @@ model Ranking {
   userId     String
   perfumeId  String
   enjoyment  Int      @default(0) // 0–100
-  versatility Int     @default(0)
   performance Int     @default(0) // longevity/sillage
-  value      Int      @default(0)
   reviewText String?
   photoUrl   String?
   createdAt  DateTime @default(now())

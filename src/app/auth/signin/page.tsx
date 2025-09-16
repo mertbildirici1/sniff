@@ -30,19 +30,41 @@ export default function SignInPage() {
     setIsLoading(true);
     setError('');
 
+    // Basic validation
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!email.includes('@')) {
+      setError('Please enter a valid email address');
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      console.log('Attempting to sign in with:', { email, passwordLength: password.length });
+      
       const result = await signIn('credentials', {
         email,
         password,
         redirect: false,
       });
 
+      console.log('Sign in result:', result);
+
       if (result?.error) {
+        console.error('Sign in error:', result.error);
         setError('Invalid email or password');
-      } else {
+      } else if (result?.ok) {
+        console.log('Sign in successful, redirecting...');
         router.push('/feed');
+      } else {
+        setError('Something went wrong. Please try again.');
       }
     } catch (error) {
+      console.error('Sign in catch error:', error);
       setError('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);

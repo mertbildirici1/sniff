@@ -45,8 +45,7 @@ const mockListItems = [
 const listTypes = [
   { value: 'tried', label: 'Tried', description: 'Perfumes you\'ve tested' },
   { value: 'wishlist', label: 'Wishlist', description: 'Perfumes you want to try' },
-  { value: 'collection', label: 'Collection', description: 'Perfumes you own' },
-  { value: 'hitlist', label: 'Hit List', description: 'Samples to try' }
+  { value: 'collection', label: 'Collection', description: 'Perfumes you own' }
 ];
 
 export default function ListsPage() {

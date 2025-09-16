@@ -32,7 +32,7 @@ export interface List {
   id: string;
   userId: string;
   name: string;
-  type: "tried" | "wishlist" | "collection" | "hitlist";
+  type: "tried" | "wishlist" | "collection";
   isPublic: boolean;
   items: ListItem[];
 }
@@ -51,9 +51,7 @@ export interface Ranking {
   userId: string;
   perfumeId: string;
   enjoyment: number;
-  versatility: number;
   performance: number;
-  value: number;
   reviewText?: string;
   photoUrl?: string;
   createdAt: Date;
@@ -81,4 +79,17 @@ export interface Comment {
   text: string;
   createdAt: Date;
   user: User;
+}
+
+// NextAuth session type extension
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      email?: string;
+      name?: string;
+      image?: string;
+      handle?: string;
+    };
+  }
 }

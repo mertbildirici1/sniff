@@ -1,11 +1,11 @@
 import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export default NextAuth({
   providers: [
-    Credentials({
+    CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -13,20 +13,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         try {
+          console.log("Authorization attempt started");
+          
           if (!credentials?.email || !credentials?.password) {
-            console.log("Missing credentials");
+            console.log("Missing credentials:", { 
+              hasEmail: !!credentials?.email, 
+              hasPassword: !!credentials?.password 
+            });
             return null;
           }
 
+          console.log("Looking up user with email:", credentials.email);
           const user = await db.user.findUnique({
             where: { email: credentials.email as string }
           });
 
-          if (!user || !user.password) {
-            console.log("User not found or no password");
+          if (!user) {
+            console.log("User not found for email:", credentials.email);
             return null;
           }
 
+          if (!user.password) {
+            console.log("User found but no password set for:", user.email);
+            return null;
+          }
+
+          console.log("User found, verifying password for:", user.email);
           // Verify password
           const isValidPassword = await bcrypt.compare(
             credentials.password as string,
@@ -34,7 +46,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           );
 
           if (!isValidPassword) {
-            console.log("Invalid password");
+            console.log("Invalid password for user:", user.email);
             return null;
           }
 
@@ -44,6 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             email: user.email,
             name: user.name,
             image: user.image,
+            handle: user.handle,
           };
         } catch (error) {
           console.error("Authorization error:", error);

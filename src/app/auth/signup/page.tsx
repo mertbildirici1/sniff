@@ -21,10 +21,20 @@ export default function SignUpPage() {
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    const { name, value } = e.target;
+    
+    // Special handling for handle field - convert to lowercase and trim
+    if (name === 'handle') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value.toLowerCase().trim()
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -146,6 +156,9 @@ export default function SignUpPage() {
                 disabled={isLoading}
                 className={formData.handle && !/^[a-zA-Z0-9_]+$/.test(formData.handle) ? 'border-red-500' : ''}
               />
+              <p className="text-xs text-muted-foreground">
+                Handle will be converted to lowercase and used as your profile URL
+              </p>
               {formData.handle && !/^[a-zA-Z0-9_]+$/.test(formData.handle) && (
                 <p className="text-sm text-red-500">Handle can only contain letters, numbers, and underscores</p>
               )}

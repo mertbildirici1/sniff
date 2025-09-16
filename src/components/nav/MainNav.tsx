@@ -8,7 +8,6 @@ import {
   Home, 
   Search, 
   List, 
-  MapPin, 
   User, 
   Sparkles,
   LogIn,
@@ -21,7 +20,6 @@ const navItems = [
   { name: 'Discover', href: '/discover', icon: Sparkles },
   { name: 'Lists', href: '/lists', icon: List },
   { name: 'Search', href: '/search', icon: Search },
-  { name: 'Map', href: '/map', icon: MapPin },
 ];
 
 export function MainNav() {
@@ -68,10 +66,10 @@ export function MainNav() {
               <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
             ) : session ? (
               <div className="flex items-center space-x-2">
-                <Link href={`/u/${session.user?.name}`}>
+                <Link href={`/u/${session.user?.handle}`}>
                   <Button variant="ghost" size="sm" className="flex items-center space-x-2">
                     <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">{session.user?.name}</span>
+                    <span className="hidden sm:inline">{session.user?.handle}</span>
                   </Button>
                 </Link>
                 <Button
