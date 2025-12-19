@@ -71,12 +71,19 @@ export function MainNav() {
               <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
             ) : session ? (
               <div className="flex items-center space-x-2">
-                <Link href={`/u/${session.user?.handle}`}>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                    <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">{session.user?.handle}</span>
-                  </Button>
-                </Link>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/profile">
+                      <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                        <User className="h-4 w-4" />
+                        <span className="hidden sm:inline">{session.user?.handle || session.user?.name}</span>
+                      </Button>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Profile</p>
+                  </TooltipContent>
+                </Tooltip>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -89,17 +96,18 @@ export function MainNav() {
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <Link href="/auth/signin">
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                    <LogIn className="h-4 w-4" />
-                    <span className="hidden sm:inline">Sign In</span>
-                  </Button>
-                </Link>
-                <Link href="/auth/signup">
-                  <Button variant="default" size="sm" className="flex items-center space-x-2">
-                    <span>Sign Up</span>
-                  </Button>
-                </Link>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/auth/signin">
+                      <Button variant="ghost" size="sm" className="flex items-center justify-center">
+                        <User className="h-5 w-5" />
+                      </Button>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Sign In</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             )}
           </div>
