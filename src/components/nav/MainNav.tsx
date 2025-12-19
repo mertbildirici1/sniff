@@ -9,7 +9,6 @@ import {
   Search, 
   List, 
   User, 
-  Sparkles,
   LogIn,
   LogOut
 } from 'lucide-react';
@@ -17,7 +16,6 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 
 const navItems = [
   { name: 'Feed', href: '/feed', icon: Home },
-  { name: 'Discover', href: '/discover', icon: Sparkles },
   { name: 'Lists', href: '/lists', icon: List },
   { name: 'Search', href: '/search', icon: Search },
 ];

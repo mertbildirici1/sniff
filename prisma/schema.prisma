@@ -80,9 +80,9 @@ model List {
 }
 
 enum ListType {
-  tried
-  wishlist
-  collection
+  own
+  sniffed
+  want
 }
 
 model ListItem {

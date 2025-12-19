@@ -32,7 +32,7 @@ export interface List {
   id: string;
   userId: string;
   name: string;
-  type: "tried" | "wishlist" | "collection";
+  type: "own" | "sniffed" | "want";
   isPublic: boolean;
   items: ListItem[];
 }

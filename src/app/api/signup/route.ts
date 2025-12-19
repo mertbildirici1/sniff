@@ -64,9 +64,9 @@ export async function POST(request: NextRequest) {
     // Create default lists for the user
     console.log('Creating default lists...');
     const defaultLists = [
-      { name: 'Tried', type: 'tried' },
-      { name: 'Wishlist', type: 'wishlist' },
-      { name: 'Collection', type: 'collection' }
+      { name: 'Own', type: 'own' },
+      { name: 'Sniffed', type: 'sniffed' },
+      { name: 'Want', type: 'want' }
     ];
 
     await db.list.createMany({

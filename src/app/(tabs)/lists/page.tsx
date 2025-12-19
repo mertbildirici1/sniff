@@ -43,13 +43,13 @@ const mockListItems = [
 ];
 
 const listTypes = [
-  { value: 'tried', label: 'Tried', description: 'Perfumes you\'ve tested' },
-  { value: 'wishlist', label: 'Wishlist', description: 'Perfumes you want to try' },
-  { value: 'collection', label: 'Collection', description: 'Perfumes you own' }
+  { value: 'own', label: 'Own', description: 'Perfumes you own' },
+  { value: 'sniffed', label: 'Sniffed', description: 'Perfumes you\'ve sniffed' },
+  { value: 'want', label: 'Want', description: 'Perfumes you want' }
 ];
 
 export default function ListsPage() {
-  const [activeList, setActiveList] = useState('tried');
+  const [activeList, setActiveList] = useState('own');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleReorder = async (newOrder: string[]) => {
@@ -70,11 +70,15 @@ export default function ListsPage() {
       </div>
 
       <Tabs value={activeList} onValueChange={setActiveList} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 rounded-lg">
           {listTypes.map((list) => (
-            <TabsTrigger key={list.value} value={list.value} className="flex flex-col items-center gap-1">
-              <ListIcon className="h-4 w-4" />
-              <span className="text-xs">{list.label}</span>
+            <TabsTrigger 
+              key={list.value} 
+              value={list.value} 
+              className="flex flex-col items-center gap-2 py-3 px-4 rounded-md transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border"
+            >
+              <ListIcon className="h-5 w-5" />
+              <span className="text-sm font-medium">{list.label}</span>
             </TabsTrigger>
           ))}
         </TabsList>
