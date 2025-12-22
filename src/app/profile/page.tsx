@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -13,20 +12,13 @@ import RankingCard from '@/components/cards/RankingCard';
 import Link from 'next/link';
 import type { Ranking } from '@/lib/types';
 
-// Mock stats - this would be fetched from the database
-const mockStats = {
-  totalRankings: 24,
-  averageScore: 78,
-  topNotes: ['Bergamot', 'Sandalwood', 'Vanilla', 'Amber', 'Musk'],
-  topBrands: ['Le Labo', 'Creed', 'Tom Ford', 'Dior', 'Chanel'],
-  streak: 15,
-  badges: ['Early Adopter', 'Perfume Expert', 'Community Helper']
-};
+// Mock top lists - replace with real data when available
+const mockTopNotes = ['Bergamot', 'Sandalwood', 'Vanilla', 'Amber', 'Musk'];
+const mockTopBrands = ['Le Labo', 'Creed', 'Tom Ford', 'Dior', 'Chanel'];
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('overview');
   const [userBio, setUserBio] = useState<string | null>(null);
   const [listCounts, setListCounts] = useState({ own: 0, sniffed: 0, want: 0 });
   const [recentRankings, setRecentRankings] = useState<Ranking[]>([]);
@@ -160,6 +152,18 @@ export default function ProfilePage() {
                 {userBio && (
                   <p className="text-sm text-muted-foreground mb-2">{userBio}</p>
                 )}
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {mockTopNotes.slice(0, 3).map(note => (
+                    <Badge key={note} variant="secondary" className="text-xs">
+                      {note}
+                    </Badge>
+                  ))}
+                  {mockTopBrands.slice(0, 3).map(brand => (
+                    <Badge key={brand} variant="outline" className="text-xs">
+                      {brand}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="flex gap-2">
@@ -222,78 +226,30 @@ export default function ProfilePage() {
         </Card>
       </div>
 
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="overview">Recent Rankings</TabsTrigger>
-          <TabsTrigger value="stats">Stats</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          {/* Recent Rankings */}
-          <div>
-            <div className="space-y-4">
-              {isLoadingRankings && (
-                <div className="flex items-center justify-center py-6">
-                  <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
-                </div>
-              )}
-              {!isLoadingRankings && rankingsError && (
-                <p className="text-sm text-red-500">{rankingsError}</p>
-              )}
-              {!isLoadingRankings && !rankingsError && recentRankings.length === 0 && (
-                <p className="text-sm text-muted-foreground">No rankings yet.</p>
-              )}
-              {!isLoadingRankings && !rankingsError && recentRankings.map(ranking => (
-                <RankingCard 
-                  key={ranking.id} 
-                  ranking={ranking} 
-                  showUser={false}
-                />
-              ))}
+      {/* Recent Rankings */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Recent Rankings</h2>
+        <div className="space-y-4">
+          {isLoadingRankings && (
+            <div className="flex items-center justify-center py-6">
+              <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
             </div>
-          </div>
-
-          {/* Badges */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Badges</h2>
-            <div className="flex flex-wrap gap-2">
-              {mockStats.badges.map(badge => (
-                <Badge key={badge} variant="secondary" className="text-sm">
-                  {badge}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="stats" className="space-y-6">
-          {/* Top Notes */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Top Notes</h2>
-            <div className="flex flex-wrap gap-2">
-              {mockStats.topNotes.map(note => (
-                <Badge key={note} variant="outline" className="text-sm">
-                  {note}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          {/* Top Brands */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Top Brands</h2>
-            <div className="flex flex-wrap gap-2">
-              {mockStats.topBrands.map(brand => (
-                <Badge key={brand} variant="outline" className="text-sm">
-                  {brand}
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-        </TabsContent>
-      </Tabs>
+          )}
+          {!isLoadingRankings && rankingsError && (
+            <p className="text-sm text-red-500">{rankingsError}</p>
+          )}
+          {!isLoadingRankings && !rankingsError && recentRankings.length === 0 && (
+            <p className="text-sm text-muted-foreground">No rankings yet.</p>
+          )}
+          {!isLoadingRankings && !rankingsError && recentRankings.map(ranking => (
+            <RankingCard 
+              key={ranking.id} 
+              ranking={ranking} 
+              showUser={false}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
