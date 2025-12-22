@@ -1,6 +1,6 @@
-# Sillage - Perfume Social Ranking App
+# Sillage
 
-A Beli-style social ranking app for perfumes built with Next.js 14, TypeScript, and modern web technologies.
+A social ranking app for perfumes.
 
 ## 🌟 Features
 
@@ -11,14 +11,6 @@ A Beli-style social ranking app for perfumes built with Next.js 14, TypeScript, 
 - **Ranking System**: Rate perfumes on enjoyment and performance (0-100 scale)
 - **Search & Discovery**: Find perfumes by name, brand, notes with advanced filtering
 - **User Profiles**: View stats, rankings, and activity with leaderboards
-
-### Technical Features
-- **Authentication**: NextAuth.js with GitHub and Google providers
-- **Database**: PostgreSQL with Prisma ORM
-- **UI Components**: shadcn/ui with Tailwind CSS
-- **Drag & Drop**: @dnd-kit for list reordering
-- **State Management**: Zustand and React Query
-- **Type Safety**: Full TypeScript support
 
 ## 🚀 Getting Started
 
@@ -140,28 +132,6 @@ pnpm db:seed      # Seed database with sample data
 1. Connect your GitHub repository to Vercel
 2. Set environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
-
-### Other Platforms
-The app can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-- AWS Amplify
-
-## 📈 Future Enhancements
-
-- **Real-time Features**: Live updates and notifications
-- **Mobile App**: React Native or Expo wrapper
-- **Advanced Recommendations**: ML-based perfume suggestions
-- **Social Features**: Comments, reactions, and sharing
-- **Analytics**: User behavior and perfume trends
-- **Import/Export**: CSV data import and list sharing
-- **API**: Public API for third-party integrations
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 
 ---
 
