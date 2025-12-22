@@ -51,31 +51,42 @@ async function main() {
     { brandId: creed.id, name: "Green Irish Tweed", concentration: "EDT", releaseYear: 1985 }
   ];
 
+  // Get notes for attaching to perfumes
+  const iris = await prisma.note.findFirst({ where: { name: "Iris" } });
+  const amber = await prisma.note.findFirst({ where: { name: "Amber" } });
+  const vanilla = await prisma.note.findFirst({ where: { name: "Vanilla" } });
+  const sandalwood = await prisma.note.findFirst({ where: { name: "Sandalwood" } });
+  const bergamot = await prisma.note.findFirst({ where: { name: "Bergamot" } });
+
   for (const p of perfumes) {
-    const created = await prisma.perfume.upsert({
-      where: { id: `${p.brandId}-${p.name}` },
-      update: {},
-      create: { ...p },
+    // Check if perfume already exists
+    let existing = await prisma.perfume.findFirst({
+      where: { name: p.name, brandId: p.brandId }
+    });
+
+    const created = existing || await prisma.perfume.create({
+      data: { ...p },
     });
     
-    // Attach some notes to each perfume
-    const iris = await prisma.note.findFirst({ where: { name: "Iris" } });
-    const amber = await prisma.note.findFirst({ where: { name: "Amber" } });
-    const vanilla = await prisma.note.findFirst({ where: { name: "Vanilla" } });
-    const sandalwood = await prisma.note.findFirst({ where: { name: "Sandalwood" } });
-    
-    if (iris) await prisma.perfumeNote.create({ 
-      data: { perfumeId: created.id, noteId: iris.id, position: "heart" } 
-    });
-    if (amber) await prisma.perfumeNote.create({ 
-      data: { perfumeId: created.id, noteId: amber.id, position: "base" } 
-    });
-    if (vanilla) await prisma.perfumeNote.create({ 
-      data: { perfumeId: created.id, noteId: vanilla.id, position: "base" } 
-    });
-    if (sandalwood) await prisma.perfumeNote.create({ 
-      data: { perfumeId: created.id, noteId: sandalwood.id, position: "base" } 
-    });
+    // Attach some notes to each perfume (skip if already has notes)
+    const existingNotes = await prisma.perfumeNote.count({ where: { perfumeId: created.id } });
+    if (existingNotes === 0) {
+      if (bergamot) await prisma.perfumeNote.create({ 
+        data: { perfumeId: created.id, noteId: bergamot.id, position: "top" } 
+      }).catch(() => {});
+      if (iris) await prisma.perfumeNote.create({ 
+        data: { perfumeId: created.id, noteId: iris.id, position: "heart" } 
+      }).catch(() => {});
+      if (amber) await prisma.perfumeNote.create({ 
+        data: { perfumeId: created.id, noteId: amber.id, position: "base" } 
+      }).catch(() => {});
+      if (vanilla) await prisma.perfumeNote.create({ 
+        data: { perfumeId: created.id, noteId: vanilla.id, position: "base" } 
+      }).catch(() => {});
+      if (sandalwood) await prisma.perfumeNote.create({ 
+        data: { perfumeId: created.id, noteId: sandalwood.id, position: "base" } 
+      }).catch(() => {});
+    }
   }
 
   console.log("Seeded successfully!");

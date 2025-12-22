@@ -70,13 +70,13 @@ enum Position {
 }
 
 model List {
-  id       String   @id @default(cuid())
-  userId   String
-  name     String
-  type     ListType
-  isPublic Boolean  @default(true)
-  user     User     @relation(fields: [userId], references: [id])
-  items    ListItem[]
+  id         String   @id @default(cuid())
+  userHandle String
+  name       String
+  type       ListType
+  isPublic   Boolean  @default(true)
+  user       User     @relation(fields: [userHandle], references: [handle])
+  items      ListItem[]
 }
 
 enum ListType {
@@ -100,8 +100,8 @@ model Ranking {
   id         String   @id @default(cuid())
   userId     String
   perfumeId  String
-  enjoyment  Int      @default(0) // 0–100
-  performance Int     @default(0) // longevity/sillage
+  enjoyment  Float    @default(5.0) // 1.0–10.0
+  performance Float   @default(5.0) // 1.0–10.0 longevity/sillage
   reviewText String?
   photoUrl   String?
   createdAt  DateTime @default(now())

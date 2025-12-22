@@ -5,12 +5,12 @@ import { auth } from '@/lib/auth';
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user?.handle) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const lists = await db.list.findMany({
-      where: { userId: session.user.id },
+      where: { userHandle: session.user.handle },
       include: {
         items: {
           include: {
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user?.handle) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         type,
-        userId: session.user.id
+        userHandle: session.user.handle
       }
     });
 

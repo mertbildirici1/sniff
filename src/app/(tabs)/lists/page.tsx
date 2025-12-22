@@ -62,8 +62,8 @@ export default function ListsPage() {
   const [searchResults, setSearchResults] = useState<Perfume[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
-  const [enjoyment, setEnjoyment] = useState(50);
-  const [performance, setPerformance] = useState(50);
+  const [enjoyment, setEnjoyment] = useState(5.0);
+  const [performance, setPerformance] = useState(5.0);
   const [reviewText, setReviewText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -142,8 +142,8 @@ export default function ListsPage() {
     setSearchQuery('');
     setSearchResults([]);
     setSelectedPerfume(null);
-    setEnjoyment(50);
-    setPerformance(50);
+    setEnjoyment(5.0);
+    setPerformance(5.0);
     setReviewText('');
     setIsDialogOpen(true);
   };
@@ -399,27 +399,29 @@ export default function ListsPage() {
             {selectedPerfume && (dialogListType === 'own' || dialogListType === 'sniffed') && (
               <div className="space-y-4 pt-2 border-t">
                 <div className="space-y-2">
-                  <Label htmlFor="enjoyment">Enjoyment: {enjoyment}</Label>
+                  <Label htmlFor="enjoyment">Enjoyment: {enjoyment.toFixed(1)}</Label>
                   <Input
                     id="enjoyment"
                     type="range"
-                    min="0"
-                    max="100"
+                    min="1"
+                    max="10"
+                    step="0.1"
                     value={enjoyment}
-                    onChange={(e) => setEnjoyment(parseInt(e.target.value))}
+                    onChange={(e) => setEnjoyment(parseFloat(e.target.value))}
                     className="h-2"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="performance">Performance: {performance}</Label>
+                  <Label htmlFor="performance">Performance: {performance.toFixed(1)}</Label>
                   <Input
                     id="performance"
                     type="range"
-                    min="0"
-                    max="100"
+                    min="1"
+                    max="10"
+                    step="0.1"
                     value={performance}
-                    onChange={(e) => setPerformance(parseInt(e.target.value))}
+                    onChange={(e) => setPerformance(parseFloat(e.target.value))}
                     className="h-2"
                   />
                 </div>

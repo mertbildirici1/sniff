@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Heart, Zap, MessageCircle } from 'lucide-react';
-import { Perfume, Ranking } from '@/lib/types';
+import { Ranking } from '@/lib/types';
 
 interface RankingCardProps {
   ranking: Ranking;
@@ -11,20 +11,24 @@ interface RankingCardProps {
 }
 
 export default function RankingCard({ ranking, showUser = false, onComment }: RankingCardProps) {
+  // Score is now 1-10
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
+    if (score >= 8) return 'text-green-600';
+    if (score >= 6) return 'text-yellow-600';
     return 'text-red-600';
   };
 
   const getScoreLabel = (score: number) => {
-    if (score >= 90) return 'Exceptional';
-    if (score >= 80) return 'Excellent';
-    if (score >= 70) return 'Very Good';
-    if (score >= 60) return 'Good';
-    if (score >= 50) return 'Average';
+    if (score >= 9) return 'Exceptional';
+    if (score >= 8) return 'Excellent';
+    if (score >= 7) return 'Very Good';
+    if (score >= 6) return 'Good';
+    if (score >= 5) return 'Average';
     return 'Below Average';
   };
+
+  // Convert 1-10 score to percentage for progress bar
+  const scoreToPercent = (score: number) => ((score - 1) / 9) * 100;
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -82,11 +86,11 @@ export default function RankingCard({ ranking, showUser = false, onComment }: Ra
               <div className="flex-1 bg-muted rounded-full h-2">
                 <div 
                   className="bg-red-500 h-2 rounded-full transition-all"
-                  style={{ width: `${ranking.enjoyment}%` }}
+                  style={{ width: `${scoreToPercent(ranking.enjoyment)}%` }}
                 />
               </div>
               <span className={`text-sm font-semibold ${getScoreColor(ranking.enjoyment)}`}>
-                {ranking.enjoyment}
+                {ranking.enjoyment.toFixed(1)}
               </span>
             </div>
             <div className="text-xs text-muted-foreground">
@@ -103,11 +107,11 @@ export default function RankingCard({ ranking, showUser = false, onComment }: Ra
               <div className="flex-1 bg-muted rounded-full h-2">
                 <div 
                   className="bg-blue-500 h-2 rounded-full transition-all"
-                  style={{ width: `${ranking.performance}%` }}
+                  style={{ width: `${scoreToPercent(ranking.performance)}%` }}
                 />
               </div>
               <span className={`text-sm font-semibold ${getScoreColor(ranking.performance)}`}>
-                {ranking.performance}
+                {ranking.performance.toFixed(1)}
               </span>
             </div>
             <div className="text-xs text-muted-foreground">
