@@ -174,17 +174,6 @@ export default function ProfilePage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-yellow-500" />
-              <div>
-                <div className="text-2xl font-bold">{mockStats.averageScore}</div>
-                <div className="text-sm text-muted-foreground">Average Score</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-green-500" />
               <div>
                 <div className="text-2xl font-bold">{userStreak ?? mockStats.streak}</div>
