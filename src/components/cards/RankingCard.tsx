@@ -8,9 +8,17 @@ interface RankingCardProps {
   ranking: Ranking;
   showUser?: boolean;
   onComment?: () => void;
+  hideReleaseYear?: boolean;
+  showNotes?: boolean;
 }
 
-export default function RankingCard({ ranking, showUser = false, onComment }: RankingCardProps) {
+export default function RankingCard({
+  ranking,
+  showUser = false,
+  onComment,
+  hideReleaseYear = false,
+  showNotes = false,
+}: RankingCardProps) {
   // Score is now 1-10
   const getScoreColor = (score: number) => {
     if (score >= 8) return 'text-green-600';
@@ -47,13 +55,22 @@ export default function RankingCard({ ranking, showUser = false, onComment }: Ra
               <div className="font-semibold text-lg">
                 {ranking.perfume.name}
               </div>
+              {showNotes && (
+                <div className="text-xs text-muted-foreground truncate">
+                  {(ranking.perfume.notes || [])
+                    .slice(0, 3)
+                    .map((n: any) => n?.note?.name)
+                    .filter(Boolean)
+                    .join(', ') || '—'}
+                </div>
+              )}
               <div className="flex items-center gap-2 mt-1">
                 {ranking.perfume.concentration && (
                   <Badge variant="secondary" className="text-xs">
                     {ranking.perfume.concentration}
                   </Badge>
                 )}
-                {ranking.perfume.releaseYear && (
+                {!hideReleaseYear && ranking.perfume.releaseYear && (
                   <Badge variant="outline" className="text-xs">
                     {ranking.perfume.releaseYear}
                   </Badge>

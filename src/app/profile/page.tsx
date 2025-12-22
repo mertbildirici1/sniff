@@ -458,6 +458,8 @@ export default function ProfilePage() {
               key={ranking.id} 
               ranking={ranking} 
               showUser={false}
+              hideReleaseYear
+              showNotes
             />
           ))}
         </div>
