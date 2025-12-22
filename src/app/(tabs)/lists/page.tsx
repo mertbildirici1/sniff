@@ -43,9 +43,9 @@ interface List {
 }
 
 const listTypes = [
-  { value: 'own', label: 'Own', description: 'Perfumes you own' },
-  { value: 'sniffed', label: 'Sniffed', description: "Perfumes you've sniffed" },
-  { value: 'want', label: 'Want', description: 'Perfumes you want' }
+  { value: 'own', label: 'Own' },
+  { value: 'sniffed', label: 'Sniffed' },
+  { value: 'want', label: 'Want' }
 ];
 
 export default function ListsPage() {
@@ -264,9 +264,6 @@ export default function ListsPage() {
     <div className="space-y-6">
       <div className="text-center">
         <h1 className="text-3xl font-bold">My Lists</h1>
-        <p className="text-muted-foreground mt-2">
-          Organize and rank your perfumes
-        </p>
       </div>
 
       <Tabs value={activeList} onValueChange={setActiveList} className="w-full">
@@ -289,7 +286,6 @@ export default function ListsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-semibold">{list.label}</h2>
-                  <p className="text-sm text-muted-foreground">{list.description}</p>
                 </div>
                 <Button
                   size="sm"
