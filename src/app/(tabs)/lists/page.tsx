@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Plus, List as ListIcon } from 'lucide-react';
@@ -49,6 +51,7 @@ const listTypes = [
 ];
 
 export default function ListsPage() {
+  const { data: session, status } = useSession();
   const [activeList, setActiveList] = useState('own');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -60,6 +63,35 @@ export default function ListsPage() {
     setIsLoading(false);
   };
 
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 text-center min-h-[50vh]">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold">Sign in to see your lists</h1>
+          <p className="text-muted-foreground max-w-md">
+            Save, rank, and organize your perfumes across your own, sniffed, and want lists.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Button asChild>
+            <Link href="/auth/signin">Sign in</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/auth/signup">Create account</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -70,12 +102,12 @@ export default function ListsPage() {
       </div>
 
       <Tabs value={activeList} onValueChange={setActiveList} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 rounded-lg">
+        <TabsList className="grid w-full grid-cols-3 gap-2 bg-muted/50 p-2 rounded-xl">
           {listTypes.map((list) => (
             <TabsTrigger 
               key={list.value} 
               value={list.value} 
-              className="flex flex-col items-center gap-2 py-3 px-4 rounded-md transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border"
+              className="flex h-20 w-full flex-col items-center justify-center gap-2 rounded-lg border border-transparent bg-background/60 transition-all duration-200 data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border-border"
             >
               <ListIcon className="h-5 w-5" />
               <span className="text-sm font-medium">{list.label}</span>

@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { auth } from '@/lib/auth';
+import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
+    const userHandle = searchParams.get('userHandle');
     const perfumeId = searchParams.get('perfumeId');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -13,7 +15,22 @@ export async function GET(request: NextRequest) {
 
     let whereClause: any = {};
 
-    if (userId) {
+    if (userHandle) {
+      const user = await db.user.findUnique({
+        where: { handle: userHandle },
+        select: { id: true },
+      });
+
+      if (user) {
+        whereClause.OR = [
+          { userId: user.id },
+          { userId: userHandle }, // fallback for data that stored handle in userId
+        ];
+      } else {
+        // fallback to handle stored in userId if user not found
+        whereClause.userId = userHandle;
+      }
+    } else if (userId) {
       whereClause.userId = userId;
     }
 
@@ -21,11 +38,10 @@ export async function GET(request: NextRequest) {
       whereClause.perfumeId = perfumeId;
     }
 
-    const [rankings, total] = await Promise.all([
+    const [rawRankings, total] = await Promise.all([
       db.ranking.findMany({
         where: whereClause,
         include: {
-          user: true,
           perfume: {
             include: {
               brand: true,
@@ -43,6 +59,18 @@ export async function GET(request: NextRequest) {
       }),
       db.ranking.count({ where: whereClause })
     ]);
+
+    // Manually resolve user - userId might be a handle or actual id
+    const rankings = await Promise.all(
+      rawRankings.map(async (ranking) => {
+        // Try to find user by id first, then by handle
+        let user = await db.user.findUnique({ where: { id: ranking.userId } });
+        if (!user) {
+          user = await db.user.findUnique({ where: { handle: ranking.userId } });
+        }
+        return { ...ranking, user };
+      })
+    );
 
     return NextResponse.json({
       rankings,
@@ -64,7 +92,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
+    const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

@@ -11,6 +11,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, BarChart3, Trophy, Calendar, MapPin, Settings } from 'lucide-react';
 import RankingCard from '@/components/cards/RankingCard';
 import Link from 'next/link';
+import type { Ranking } from '@/lib/types';
+import { dataTagErrorSymbol } from '@tanstack/react-query';
 
 // Mock stats - this would be fetched from the database
 const mockStats = {
@@ -22,78 +24,81 @@ const mockStats = {
   badges: ['Early Adopter', 'Perfume Expert', 'Community Helper']
 };
 
-// Mock rankings - this would be fetched from the database
-const mockRankings = [
-  {
-    id: '1',
-    userId: '1',
-    perfumeId: '1',
-    enjoyment: 85,
-    performance: 90,
-    reviewText: 'Absolutely love this scent! Perfect for everyday wear and lasts all day.',
-    photoUrl: '/placeholder.svg',
-    createdAt: new Date('2024-01-15'),
-    user: {
-      id: '1',
-      handle: 'user',
-      name: 'User Name',
-      image: '/placeholder.svg',
-      email: 'user@example.com',
-    },
-    perfume: {
-      id: '1',
-      name: 'Santal 33',
-      concentration: 'EDP',
-      releaseYear: 2011,
-      imageUrl: '/placeholder.svg',
-      brand: { id: '1', name: 'Le Labo', country: 'US' },
-      notes: [
-        { perfumeId: '1', noteId: '1', position: 'top', note: { id: '1', name: 'Bergamot', family: 'Citrus' } },
-        { perfumeId: '1', noteId: '2', position: 'heart', note: { id: '2', name: 'Sandalwood', family: 'Woody' } }
-      ]
-    }
-  },
-  {
-    id: '2',
-    userId: '1',
-    perfumeId: '2',
-    enjoyment: 95,
-    performance: 85,
-    reviewText: 'Incredible longevity and sillage. Worth every penny!',
-    photoUrl: '/placeholder.svg',
-    createdAt: new Date('2024-01-14'),
-    user: {
-      id: '1',
-      handle: 'user',
-      name: 'User Name',
-      image: '/placeholder.svg',
-      email: 'user@example.com',
-    },
-    perfume: {
-      id: '2',
-      name: 'Aventus',
-      concentration: 'EDP',
-      releaseYear: 2010,
-      imageUrl: '/placeholder.svg',
-      brand: { id: '2', name: 'Creed', country: 'FR' },
-      notes: [
-        { perfumeId: '2', noteId: '1', position: 'top', note: { id: '1', name: 'Bergamot', family: 'Citrus' } },
-        { perfumeId: '2', noteId: '3', position: 'heart', note: { id: '3', name: 'Pineapple', family: 'Fruity' } }
-      ]
-    }
-  }
-];
-
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
+  const [userStreak, setUserStreak] = useState<number | null>(null);
+  const [recentRankings, setRecentRankings] = useState<Ranking[]>([]);
+  const [totalRankings, setTotalRankings] = useState<number>(0);
+  const [isLoadingRankings, setIsLoadingRankings] = useState(false);
+  const [rankingsError, setRankingsError] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/auth/signin');
     }
   }, [status, router]);
+
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+
+    let isMounted = true;
+    const fetchMe = async () => {
+      try {
+        const res = await fetch('/api/me');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (isMounted && typeof data.streak === 'number') {
+          setUserStreak(data.streak);
+        }
+        console.log(data)
+      } catch (error) {
+        console.error('Failed to load user streak', error);
+      }
+    };
+
+
+    fetchMe();
+    return () => {
+      isMounted = false;
+    };
+  }, [status]);
+
+  useEffect(() => {
+    const loadRankings = async () => {
+      if (status !== 'authenticated') return;
+      setIsLoadingRankings(true);
+      setRankingsError(null);
+      try {
+        const handle = session.user.handle;
+        const id = (session.user as any).id;
+        const params = new URLSearchParams({ limit: '5' });
+        if (handle) params.set('userHandle', handle);
+        if (id) params.set('userId', id);
+
+        const res = await fetch(`/api/rankings?${params.toString()}`);
+        if (!res.ok) {
+          setRankingsError('Failed to load rankings');
+          return;
+        }
+        const data = await res.json();
+        const rankings = (data.rankings || []).map((r: any) => ({
+          ...r,
+          createdAt: new Date(r.createdAt),
+        })) as Ranking[];
+        setRecentRankings(rankings);
+        setTotalRankings(data.pagination?.total ?? 0);
+      } catch (error) {
+        console.error('Failed to load rankings', error);
+        setRankingsError('Failed to load rankings');
+      } finally {
+        setIsLoadingRankings(false);
+      }
+    };
+
+    loadRankings();
+  }, [session?.user, status]);
 
   if (status === 'loading') {
     return (
@@ -136,7 +141,7 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex items-center gap-1">
                     <Trophy className="h-4 w-4" />
-                    {mockStats.streak} day streak
+                    {(userStreak ?? mockStats.streak)} day streak
                   </div>
                 </div>
               </div>
@@ -160,7 +165,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-blue-500" />
               <div>
-                <div className="text-2xl font-bold">{mockStats.totalRankings}</div>
+                <div className="text-2xl font-bold">{totalRankings}</div>
                 <div className="text-sm text-muted-foreground">Perfumes Ranked</div>
               </div>
             </div>
@@ -182,7 +187,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-green-500" />
               <div>
-                <div className="text-2xl font-bold">{mockStats.streak}</div>
+                <div className="text-2xl font-bold">{userStreak ?? mockStats.streak}</div>
                 <div className="text-sm text-muted-foreground">Day Streak</div>
               </div>
             </div>
@@ -192,9 +197,8 @@ export default function ProfilePage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="rankings">Rankings</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="overview">Recent Rankings</TabsTrigger>
           <TabsTrigger value="stats">Stats</TabsTrigger>
         </TabsList>
 
@@ -203,7 +207,18 @@ export default function ProfilePage() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Recent Rankings</h2>
             <div className="space-y-4">
-              {mockRankings.slice(0, 3).map(ranking => (
+              {isLoadingRankings && (
+                <div className="flex items-center justify-center py-6">
+                  <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+                </div>
+              )}
+              {!isLoadingRankings && rankingsError && (
+                <p className="text-sm text-red-500">{rankingsError}</p>
+              )}
+              {!isLoadingRankings && !rankingsError && recentRankings.length === 0 && (
+                <p className="text-sm text-muted-foreground">No rankings yet.</p>
+              )}
+              {!isLoadingRankings && !rankingsError && recentRankings.map(ranking => (
                 <RankingCard 
                   key={ranking.id} 
                   ranking={ranking} 
@@ -223,19 +238,6 @@ export default function ProfilePage() {
                 </Badge>
               ))}
             </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="rankings" className="space-y-4">
-          <h2 className="text-xl font-semibold">All Rankings</h2>
-          <div className="space-y-4">
-            {mockRankings.map(ranking => (
-              <RankingCard 
-                key={ranking.id} 
-                ranking={ranking} 
-                showUser={false}
-              />
-            ))}
           </div>
         </TabsContent>
 
@@ -264,22 +266,10 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Activity Chart Placeholder */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Activity</h2>
-            <Card>
-              <CardContent className="p-6">
-                <div className="text-center text-muted-foreground">
-                  <BarChart3 className="h-12 w-12 mx-auto mb-2" />
-                  <p>Activity chart coming soon</p>
-                  <p className="text-sm">Track your perfume discovery journey over time</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </TabsContent>
       </Tabs>
     </div>
   );
 }
+
 

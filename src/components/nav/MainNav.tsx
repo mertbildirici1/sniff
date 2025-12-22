@@ -10,10 +10,9 @@ import {
   Search, 
   List, 
   User, 
-  LogIn,
-  LogOut
+  LogIn
 } from 'lucide-react';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 
 const navItems = [
   { name: 'Feed', href: '/feed', icon: Home },
@@ -84,15 +83,6 @@ export function MainNav() {
                     <p>Profile</p>
                   </TooltipContent>
                 </Tooltip>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => signOut()}
-                  className="flex items-center space-x-2"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span className="hidden sm:inline">Sign Out</span>
-                </Button>
               </div>
             ) : (
               <div className="flex items-center space-x-2">

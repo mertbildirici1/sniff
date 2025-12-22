@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -68,12 +68,16 @@ export default NextAuth({
   session: { strategy: "jwt" },
   callbacks: {
     async session({ session, token }) {
-      if (session.user) (session.user as any).id = token.sub;
+      if (session.user) {
+        (session.user as any).id = token.sub;
+        (session.user as any).handle = token.handle;
+      }
       return session;
     },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.handle = (user as any).handle;
       }
       return token;
     },
@@ -83,4 +87,6 @@ export default NextAuth({
     error: "/auth/signin", // Redirect errors back to signin page
   },
   debug: process.env.NODE_ENV === "development",
-});
+};
+
+export default NextAuth(authOptions);
