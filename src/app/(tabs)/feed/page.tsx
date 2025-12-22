@@ -78,13 +78,6 @@ const mockRankings: Ranking[] = [
 export default function FeedPage() {
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold">Feed</h1>
-        <p className="text-muted-foreground mt-2">
-          See what your friends are discovering and ranking
-        </p>
-      </div>
-      
       <div className="space-y-6">
         {mockRankings.map((ranking) => (
           <RankingCard 
