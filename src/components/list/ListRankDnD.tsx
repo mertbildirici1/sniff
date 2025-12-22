@@ -52,20 +52,15 @@ export function ListRankDnD({ items, onReorder, isLoading = false }: ListRankDnD
 
   return (
     <div className="space-y-4">
-      {localItems.map((item, index) => (
+      {localItems.map((item) => (
         <Card key={item.id} className="hover:shadow-md transition-shadow">
           <CardContent className="p-4">
             <div className="flex gap-4">
-              <div className="relative">
-                <img 
-                  src={item.perfume.imageUrl || '/placeholder.svg'} 
-                  alt={item.perfume.name} 
-                  className="h-20 w-20 object-cover rounded-xl border"
-                />
-                <div className="absolute -top-2 -left-2 bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-sm font-bold">
-                  {index + 1}
-                </div>
-              </div>
+              <img 
+                src={item.perfume.imageUrl || '/placeholder.svg'} 
+                alt={item.perfume.name} 
+                className="h-20 w-20 object-cover rounded-xl border"
+              />
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-sm text-muted-foreground truncate">
                   {item.perfume.brand.name}
