@@ -73,13 +73,6 @@ A social ranking app for perfumes.
 - **Search** (`/search`) - Search and filter perfumes
 - **Profile** (`/u/[handle]`) - User profiles and stats (uses actual usernames)
 
-### Key Components
-- `PerfumeCard` - Display perfume information
-- `RankingCard` - Show perfume rankings with scores
-- `RankingForm` - Create/edit perfume rankings
-- `ListRankDnD` - Drag-and-drop list reordering
-- `MainNav` - Navigation with authentication
-
 ## 🗄️ Database Schema
 
 The app uses a comprehensive Prisma schema with the following main models:
