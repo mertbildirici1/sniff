@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, BarChart3, Trophy, Calendar, MapPin, Settings } from 'lucide-react';
+import { User, BarChart3, Settings, List as ListIcon } from 'lucide-react';
 import RankingCard from '@/components/cards/RankingCard';
 import Link from 'next/link';
 import type { Ranking } from '@/lib/types';
@@ -27,8 +27,8 @@ export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
-  const [userStreak, setUserStreak] = useState<number | null>(null);
   const [userBio, setUserBio] = useState<string | null>(null);
+  const [listCounts, setListCounts] = useState({ own: 0, sniffed: 0, want: 0 });
   const [recentRankings, setRecentRankings] = useState<Ranking[]>([]);
   const [totalRankings, setTotalRankings] = useState<number>(0);
   const [isLoadingRankings, setIsLoadingRankings] = useState(false);
@@ -49,13 +49,8 @@ export default function ProfilePage() {
         const res = await fetch('/api/me');
         if (!res.ok) return;
         const data = await res.json();
-        if (isMounted) {
-          if (typeof data.streak === 'number') {
-            setUserStreak(data.streak);
-          }
-          if (data.bio) {
-            setUserBio(data.bio);
-          }
+        if (isMounted && data.bio) {
+          setUserBio(data.bio);
         }
       } catch (error) {
         console.error('Failed to load user data', error);
@@ -67,6 +62,30 @@ export default function ProfilePage() {
     return () => {
       isMounted = false;
     };
+  }, [status]);
+
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+
+    const fetchLists = async () => {
+      try {
+        const res = await fetch('/api/lists');
+        if (!res.ok) return;
+        const data = await res.json();
+        const counts = { own: 0, sniffed: 0, want: 0 };
+        (data.lists || []).forEach((list: any) => {
+          const len = Array.isArray(list.items) ? list.items.length : 0;
+          if (list.type === 'own') counts.own = len;
+          if (list.type === 'sniffed') counts.sniffed = len;
+          if (list.type === 'want') counts.want = len;
+        });
+        setListCounts(counts);
+      } catch (error) {
+        console.error('Failed to load lists', error);
+      }
+    };
+
+    fetchLists();
   }, [status]);
 
   useEffect(() => {
@@ -141,13 +160,6 @@ export default function ProfilePage() {
                 {userBio && (
                   <p className="text-sm text-muted-foreground mb-2">{userBio}</p>
                 )}
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-
-                  <div className="flex items-center gap-1">
-                    <Trophy className="h-4 w-4" />
-                    {(userStreak ?? mockStats.streak)} day streak
-                  </div>
-                </div>
               </div>
             </div>
             <div className="flex gap-2">
@@ -163,7 +175,7 @@ export default function ProfilePage() {
       </Card>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -178,10 +190,32 @@ export default function ProfilePage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-green-500" />
+              <ListIcon className="h-5 w-5 text-purple-500" />
               <div>
-                <div className="text-2xl font-bold">{userStreak ?? mockStats.streak}</div>
-                <div className="text-sm text-muted-foreground">Day Streak</div>
+                <div className="text-2xl font-bold">{listCounts.own}</div>
+                <div className="text-sm text-muted-foreground">Own</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <ListIcon className="h-5 w-5 text-emerald-500" />
+              <div>
+                <div className="text-2xl font-bold">{listCounts.sniffed}</div>
+                <div className="text-sm text-muted-foreground">Sniffed</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <ListIcon className="h-5 w-5 text-amber-500" />
+              <div>
+                <div className="text-2xl font-bold">{listCounts.want}</div>
+                <div className="text-sm text-muted-foreground">Want</div>
               </div>
             </div>
           </CardContent>
@@ -198,7 +232,6 @@ export default function ProfilePage() {
         <TabsContent value="overview" className="space-y-6">
           {/* Recent Rankings */}
           <div>
-            <h2 className="text-xl font-semibold mb-4">Recent Rankings</h2>
             <div className="space-y-4">
               {isLoadingRankings && (
                 <div className="flex items-center justify-center py-6">
