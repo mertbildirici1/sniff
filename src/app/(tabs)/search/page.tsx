@@ -29,7 +29,6 @@ const filterOptions = {
   concentration: ['EDT', 'EDP', 'Parfum'],
   notes: ['Bergamot', 'Sandalwood', 'Rose', 'Vanilla', 'Amber', 'Musk'],
   brands: ['Le Labo', 'Creed', 'Tom Ford', 'Dior', 'Chanel'],
-  priceRange: ['Under $50', '$50-$100', '$100-$200', '$200+']
 };
 
 export default function SearchPage() {
@@ -150,7 +149,7 @@ export default function SearchPage() {
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Concentration */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Concentration</label>
@@ -197,23 +196,6 @@ export default function SearchPage() {
                         onClick={() => handleFilterChange('brands', brand)}
                       >
                         {brand}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Price Range */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Price Range</label>
-                  <div className="flex flex-wrap gap-1">
-                    {filterOptions.priceRange.map(price => (
-                      <Badge
-                        key={price}
-                        variant={selectedFilters.priceRange?.includes(price) ? "default" : "outline"}
-                        className="cursor-pointer"
-                        onClick={() => handleFilterChange('priceRange', price)}
-                      >
-                        {price}
                       </Badge>
                     ))}
                   </div>
