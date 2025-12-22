@@ -12,7 +12,6 @@ import { User, BarChart3, Trophy, Calendar, MapPin, Settings } from 'lucide-reac
 import RankingCard from '@/components/cards/RankingCard';
 import Link from 'next/link';
 import type { Ranking } from '@/lib/types';
-import { dataTagErrorSymbol } from '@tanstack/react-query';
 
 // Mock stats - this would be fetched from the database
 const mockStats = {
@@ -29,6 +28,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [userStreak, setUserStreak] = useState<number | null>(null);
+  const [userBio, setUserBio] = useState<string | null>(null);
   const [recentRankings, setRecentRankings] = useState<Ranking[]>([]);
   const [totalRankings, setTotalRankings] = useState<number>(0);
   const [isLoadingRankings, setIsLoadingRankings] = useState(false);
@@ -49,12 +49,16 @@ export default function ProfilePage() {
         const res = await fetch('/api/me');
         if (!res.ok) return;
         const data = await res.json();
-        if (isMounted && typeof data.streak === 'number') {
-          setUserStreak(data.streak);
+        if (isMounted) {
+          if (typeof data.streak === 'number') {
+            setUserStreak(data.streak);
+          }
+          if (data.bio) {
+            setUserBio(data.bio);
+          }
         }
-        console.log(data)
       } catch (error) {
-        console.error('Failed to load user streak', error);
+        console.error('Failed to load user data', error);
       }
     };
 
@@ -134,11 +138,11 @@ export default function ProfilePage() {
                     <Badge variant="outline">@{user.handle}</Badge>
                   )}
                 </div>
+                {userBio && (
+                  <p className="text-sm text-muted-foreground mb-2">{userBio}</p>
+                )}
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    Member
-                  </div>
+
                   <div className="flex items-center gap-1">
                     <Trophy className="h-4 w-4" />
                     {(userStreak ?? mockStats.streak)} day streak
